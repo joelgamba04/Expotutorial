@@ -23,7 +23,6 @@ const Button = ({ label, theme, onClickPress }: Props) => {
               console.log("Button: Choose photo pressed");
               onClickPress();
             } else alert("clickpress is null.");
-            // onClickPress;
           }}
         >
           <FontAwesome
@@ -45,8 +44,11 @@ const Button = ({ label, theme, onClickPress }: Props) => {
       <Pressable
         style={styles.button}
         onPress={() => {
-          console.log("Button: use this photo pressed");
-          alert("You pressed a button.");
+          if (onClickPress) {
+            console.log("Button: Use this photo pressed");
+
+            onClickPress();
+          } else alert("clickpress is null.");
         }}
       >
         <Text style={styles.buttonLabel}>{label}</Text>

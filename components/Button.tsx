@@ -4,9 +4,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 type Props = {
   label: string;
   theme?: "primary";
+  onClickPress?: () => void;
 };
 
-const Button = ({ label, theme }: Props) => {
+const Button = ({ label, theme, onClickPress }: Props) => {
   if (theme === "primary") {
     return (
       <View
@@ -17,7 +18,13 @@ const Button = ({ label, theme }: Props) => {
       >
         <Pressable
           style={[styles.button, { backgroundColor: "#fff" }]}
-          onPress={() => alert("You pressed a button. talala")}
+          onPress={() => {
+            if (onClickPress) {
+              console.log("Button: Choose photo pressed");
+              onClickPress();
+            } else alert("clickpress is null.");
+            // onClickPress;
+          }}
         >
           <FontAwesome
             name="picture-o"
@@ -37,7 +44,10 @@ const Button = ({ label, theme }: Props) => {
     <View style={styles.buttonContainer}>
       <Pressable
         style={styles.button}
-        onPress={() => alert("You pressed a button.")}
+        onPress={() => {
+          console.log("Button: use this photo pressed");
+          alert("You pressed a button.");
+        }}
       >
         <Text style={styles.buttonLabel}>{label}</Text>
       </Pressable>

@@ -1,9 +1,10 @@
 import { View, StyleSheet } from "react-native";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { type ImageSource } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as MediaLibrary from "expo-media-library";
+import { captureRef } from "react-native-view-shot";
 
 import ImageViewer from "@/components/ImageViewer";
 import Button from "@/components/Button";
@@ -26,11 +27,15 @@ const Index = () => {
     undefined
   );
 
-  const [status, requestPermission] = MediaLibrary.usePermissions();
+  const [permissionStatus, requestPermission] = MediaLibrary.usePermissions();
 
-  if (status === null) {
-    requestPermission();
-  }
+  useEffect(() => {
+    if (!permissionStatus?.granted) {
+      requestPermission();
+    }
+  }, []);
+
+  const imageRef = useRef<View>(null);
 
   const pickImageAsync = async () => {
     console.log("Index: pickImageAsync start");
@@ -66,12 +71,25 @@ const Index = () => {
 
   const onSaveImageAsync = async () => {
     console.log("Index: onSaveImageAsync");
+    try {
+      const localUri = await captureRef(imageRef, {
+        height: 440,
+        quality: 1,
+      });
+
+      await MediaLibrary.saveToLibraryAsync(localUri);
+      if (localUri) {
+        alert("Saved!");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.container}>
-        <View style={styles.imageContainer}>
+        <View style={styles.imageContainer} ref={imageRef}>
           <ImageViewer
             imgSource={PlaceholderImage}
             selectedImage={selectedImage}
